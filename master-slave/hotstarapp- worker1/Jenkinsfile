@@ -1,0 +1,34 @@
+pipeline {
+    agent{
+        label 'worker1'
+    }
+
+    stages {
+        stage('Clone project..') {
+            steps {
+                git 'https://github.com/KastroVKiran/Hotstar-App.git'
+            }
+        }
+        
+        stage('build compile..') {
+            steps {
+                 sh 'mvn compile'
+            }
+        }
+        stage('test code repo..') {
+            steps {
+                 sh 'mvn test'
+            }
+        }
+        stage('build package..') {
+            steps {
+                 sh 'mvn clean package'
+            }
+        }
+        stage('deployment..') {
+            steps {
+                 deploy adapters: [tomcat9(alternativeDeploymentContext: '', credentialsId: 'tomcat-creds', path: '', url: 'http://15.206.151.84:9090/')], contextPath: 'hotstar-app', onFailure: false, war: '**/*.war'
+            }
+        }
+    }  
+}

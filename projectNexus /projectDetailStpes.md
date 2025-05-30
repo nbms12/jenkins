@@ -354,3 +354,10 @@ Jenkins ----> Manage Jenkins ----> Security ----> Credentials ----> Click on 'gl
 
 
 Apply and Build the job
+
+
+Ooutput : 
+
+sonarqube 
+
+![image](https://github.com/user-attachments/assets/6786c2af-19aa-4a8c-925b-0c48f4f0211a)

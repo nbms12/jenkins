@@ -268,3 +268,43 @@ Maven Integration
 
 
 6. #Setup Tomcat Creds in Jenkins
+
+Username with Password, Scope: Global, username: admin, Password: admin,
+
+
+7.#Open Pipeline Syntax in new tab 
+
+----> Sample step: deploy: Deploy war/ear to a container, WAR/EAR Files: **/*.war, Context Path: hotstarapp, Add container: Select 'Tomcat 9.x Remote', Credentials: Select the tomcat creds from dropdown, Tomcat URL: Paste upto 8080/ ----> Generate pipeline script ----> Copy and paste in 'Deploy to Tomcat' stage
+
+
+Paste the below script;
+pipeline {
+    agent any
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git '<Repo URL>'
+            }
+        }
+        stage('Compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        } 
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('Arifacts') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Deploy to Tomcat') {
+            steps {
+                <Paste The Script>
+            }
+        }
+    }
+}

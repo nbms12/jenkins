@@ -208,16 +208,25 @@ Save and exit
 
 sudo vi /etc/systemd/system/nexus.service ----> Paste the below content ---->
 
+
 [Unit]
+
 Description=nexus service
+
 After=network.target
 
 [Service]
+
 Type=forking
+
 LimitNOFILE=65536
+
 ExecStart=/opt/nexus/bin/nexus start
+
 ExecStop=/opt/nexus/bin/nexus stop
+
 User=nexus
+
 Restart=on-abort
 
 [Install]
@@ -228,8 +237,11 @@ Save and exit
 
 
 ##To start the nexus Service
-sudo systemctl start nexus 
+
+sudo systemctl start nexus
+
 sudo systemctl enable nexus 
+
 sudo systemctl status nexus  
 
 Open port no. 8081 and access nexus
@@ -240,11 +252,17 @@ Open port no. 8081 and access nexus
 5. ##Install below plugins in Jenkins
 
 Pipeline stageview,
+
 Deploy to container,
+
 S3 publisher,
+
 nexus artifact uploader,
+
 SonarQube Scanner,
+
 Sonar Quality Gate, 
+
 Maven Integration
 
 

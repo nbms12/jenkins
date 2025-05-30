@@ -276,35 +276,30 @@ Username with Password, Scope: Global, username: admin, Password: admin,
 
 ----> Sample step: deploy: Deploy war/ear to a container, WAR/EAR Files: **/*.war, Context Path: hotstarapp, Add container: Select 'Tomcat 9.x Remote', Credentials: Select the tomcat creds from dropdown, Tomcat URL: Paste upto 8080/ ----> Generate pipeline script ----> Copy and paste in 'Deploy to Tomcat' stage
 
+  8. #Working with SonarQube
+     
+Goto SonarQube ----> Projects ----> Add project ----> Manually ----> Project key: hotstar, Display name: hotstar ----> Setup ----> Generate a token: hotstar ----> Generate ----> Copy the token ----> Lets configure the SonarQube credentials in Jenkins
 
-Paste the below script;
-pipeline {
-    agent any
-    stages {
-        stage('Git Checkout') {
+sonarqube creds create : 
+
+Jenkins ----> Manage Jenkins ----> Security ----> Credentials ----> Click on 'global' ----> Add creds ----> Kind: Secret text, Scope: Global, Secret: Paste the secret copied from SonarQube, ID: sonar, Description: sonar ----> Create
+
+add sonarqube inside jenkins server: 
+
+Jenkins ----> Manage Jenkins ----> System Configuration ----> System ----> Scroll down to 'SonarQube servers' ----> 'Check' environment variables, Add SonarQube ----> Name: SonarQube, Server URL: <SonarQube URL> [only upto 9000] ----> Server authentication token: Select 'sonar' from dropdown ----> Apply ----> Save
+
+Jenkins ----> Manage Jenkins ----> System Configuration ----> Tools ----> Scroll down to 'sonarqube Scanner Installations' ----> Add SonarQube scanner ----> Name: sonarscanner, 'Check' Install automatically, Version: 7.1.0.4889 ----> Apply ----> Save
+
+Lets integrate SonarQube in the pipeline ----> Open the job ----> Paste the below script (In the script, i have added sonarqube-scanning' stage before the artifacts stage)
+
+insert a new stage
+
+```
+stage('SonarQube Scanning') {
             steps {
-                git '<Repo URL>'
+                withSonarQubeEnv('sonarqube') {
+                    sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+                }
             }
         }
-        stage('Compile') {
-            steps {
-                sh 'mvn compile'
-            }
-        } 
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-        }
-        stage('Arifacts') {
-            steps {
-                sh 'mvn clean package'
-            }
-        }
-        stage('Deploy to Tomcat') {
-            steps {
-                <Paste The Script>
-            }
-        }
-    }
-}
+```

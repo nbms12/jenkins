@@ -295,11 +295,62 @@ Lets integrate SonarQube in the pipeline ----> Open the job ----> Paste the belo
 insert a new stage
 
 ```
-stage('SonarQube Scanning') {
+ pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
             steps {
-                withSonarQubeEnv('sonarqube') {
+                git '<Repo URL>'
+            }
+        }
+        stage('Compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        } 
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        stage('SonarQube Scanning') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
                     sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
                 }
             }
         }
+        stage('Artifacts') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Deploy to Tomcat') {
+            steps {
+                // <Paste The Script>
+            }
+        }
+        stage('Nexus') {
+            steps {
+                // <Paste The Script>
+            }
+        }
+        stage('Artifact to S3') {
+            steps {
+                // <Paste The Script>
+            }
+        }
+    }
+}
+
 ```
+8. #Nexus Configuration
+
+Goto Nexus tab in browser ----> Signin ----> Username: admin, To get the password, copy the path seen in the nexus browser ----> Goto the nexus connected tab in Moba ----> cat <Paste The Path> ----> Copy the password. dont copy "root@nexus" ----> Paste the password in nexus browser ----> Signin ----> Set the new password ----> Enable anonymous access ----> Signin
+
+Click on settings icon ----> Click on 'repositories' ----> Create repo ----> Scroll down and Click on 'maven2 hosted' ----> Name: hotstar, Version policy: Snapshot, Layout policy: Strict, Content disposition: Inline, Blob store: default, Deployment policy: Allow redeploy ----> Create repository ----> You will see 'hotstar' repo ----> Lets configure the Nexus credentials in Jenkins
+
+Jenkins ----> Manage Jenkins ----> Security ----> Credentials ----> Click on 'global' ----> Add creds ----> Kind: Username with Password, Scope: Global, Username: admin, Password: <Enter The Password of SonarQube>,ID: nexus, Description: nexus ----> Create
+
+
+Apply and Build the job
